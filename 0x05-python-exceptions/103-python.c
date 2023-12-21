@@ -8,7 +8,7 @@
  */
 void print_python_bytes(PyObject *p) {
     char *string;
-    Py_ssize_t size, i, limit;
+    Py_ssize_t size, limit, i;
 
     setbuf(stdout, NULL);
 
@@ -18,18 +18,18 @@ void print_python_bytes(PyObject *p) {
         return;
     }
 
-    size = PyBytes_Size(p);
-    string = PyBytes_AsString(p);
+    size = ((PyVarObject *)p)->ob_size;
+    string = ((PyBytesObject *)p)->ob_sval;
 
     printf("  size: %ld\n", size);
     printf("  trying string: %s\n", string);
 
     limit = (size > 10) ? 10 : size;
 
-    printf("  first %ld bytes:", limit);
+    printf("  first %ld bytes:", size);
 
     for (i = 0; i < limit; i++) {
-        printf(" %02x", (unsigned char)string[i]);
+        printf(" %02hhx", string[i]);
     }
     printf("\n");
 }
@@ -51,7 +51,7 @@ void print_python_float(PyObject *p) {
         return;
     }
 
-    val = PyFloat_AsDouble(p);
+    val = ((PyFloatObject *)p)->ob_fval;
     nf = PyOS_double_to_string(val, 'r', 0, Py_DTSF_ADD_DOT_0, Py_DTST_FINITE);
 
     printf("  value: %s\n", nf);
@@ -74,7 +74,7 @@ void print_python_list(PyObject *p) {
         return;
     }
 
-    size = PyList_Size(p);
+    size = ((PyVarObject *)p)->ob_size;
 
     printf("[*] Size of the Python List = %ld\n", size);
     printf("[*] Allocated = %ld\n", ((PyListObject *)p)->allocated);
