@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""A Rectangle subclass Square."""
 
 class BaseGeometry:
     """
